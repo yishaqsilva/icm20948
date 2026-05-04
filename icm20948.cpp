@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
+#include <stdio.h>
 
 icm20948::icm20948(const char* filename, uint8_t addr){ 
         
