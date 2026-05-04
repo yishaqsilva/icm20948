@@ -2,11 +2,19 @@
 #define ICM20948_H
 #include <cstdint>
 
+typedef struct {
+
+    float x;
+    float y;
+    float z;
+
+}accel_data;
+
 class icm20948 {
 
     private:
-         uint8_t addr;
          int fd;
+         uint8_t addr;
 
     public:
         icm20948(const char* i2c_bus, uint8_t addr); //I2C
