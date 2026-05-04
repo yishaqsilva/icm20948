@@ -6,14 +6,6 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 
-typedef struct {
-
-    float x;
-    float y;
-    float z;
-
-} accel_data;
-
 icm20948::icm20948(const char* filename, uint8_t addr){ 
         
    fd = open(filename, O_RDWR);
