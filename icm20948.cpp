@@ -10,8 +10,14 @@
 icm20948::icm20948(const char* filename, uint8_t addr){ 
         
    fd = open(filename, O_RDWR);
-   ioctl(fd, I2C_SLAVE, addr); //hi kernel, we have a slave!
    this->addr = addr;
+
+   if (fd < 0){
+        printf("Unable to open file %s\n", filename);
+   }
+   if (ioctl(fd, I2C_SLAVE, addr) < 0){
+        printf("Unable to set slave address %x\n", this->addr);
+   }
 }
 
 uint8_t icm20948::read_byte(uint8_t reg){
