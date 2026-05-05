@@ -22,7 +22,7 @@ icm20948::icm20948(const char* filename, uint8_t addr){
 
 uint8_t icm20948::read_byte(uint8_t reg){
 
-    uint8_t response;
+    uint8_t response = 0x00;
 
     struct i2c_msg msgs[2] = {
     
