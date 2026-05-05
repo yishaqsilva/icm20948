@@ -9,5 +9,9 @@ PYBIND11_MODULE(icm20948, m, pybind11::mod_gil_not_used()) {
         .def("read_word", &icm20948::read_word)
         .def("get_accel_data", &icm20948::get_accel_data);
 
-    pybind11::class_<accel_data>(m, "accel_data");
+    pybind11::class_<accel_data>(m, "accel_data")
+        .def_readwrite("x", &accel_data::x)
+        .def_readwrite("y", &accel_data::y)
+        .def_readwrite("z", &accel_data::z);
+
 }
