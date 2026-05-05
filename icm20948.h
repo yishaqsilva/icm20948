@@ -18,7 +18,6 @@ class icm20948 {
 
     public:
         icm20948(const char* i2c_bus, uint8_t addr); //I2C
-        icm20948(const char* spi_device); //SPI
 
         int write_byte(uint8_t reg, uint8_t byte);
 

@@ -11,14 +11,7 @@ icm20948::icm20948(const char* filename, uint8_t addr){
         
    fd = open(filename, O_RDWR);
    ioctl(fd, I2C_SLAVE, addr); //hi kernel, we have a slave!
-}
-
-icm20948::icm20948(const char* filename){
-
-    uint8_t byte;
-    fd = open(filename, O_RDWR);
-    ioctl(fd, SPI_IOC_RD_MODE, byte);
-    printf("%x", byte);
+   this->addr = addr;
 }
 
 uint8_t icm20948::read_byte(uint8_t reg){
