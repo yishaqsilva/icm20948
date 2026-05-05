@@ -52,12 +52,42 @@ int icm20948::write_byte(uint8_t reg, uint8_t byte){
 uint16_t icm20948::read_word(uint8_t regA, uint8_t regB){
     
     uint16_t word = read_byte(regA);
+
     return word << 8 | read_byte(regB);
 }
 
-accel_data icm20948::get_accel(){
-        
-    accel_data dat;
+void icm20948::set_bank(uint8_t bank){
+    write_byte(0x7F, bank << 4);
+}
+
+uint8_t icm20948::get_accel_fs_sel(){
     
+    set_bank(2);
+    uint8_t fs_sel = (read_byte(0x14) & 0x06) >> 1;
+
+    return fs_sel;
+}
+
+accel_data icm20948::get_accel_data(){
+    
+    float scale_ranges[4] = {16384.0f, 8192.0f, 4096.0f, 2048.0f};
+    float fs = scale_ranges[get_accel_fs_sel()];
+
+    set_bank(0);
+
+    accel_data dat = {
+        
+        .x = read_word(0x2D, 0x2E) / fs,
+        .y = read_word(0x2F, 0x30) / fs,
+        .z = read_word(0x31, 0x32) / fs
+    };
+    
+    return dat;
+}
+
+gyro_data icm20948::get_gyro_data(){
+
+    gyro_data dat = {};
+
     return dat;
 }
