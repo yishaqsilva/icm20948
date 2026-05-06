@@ -24,9 +24,9 @@ icm20948::icm20948(const char* filename, uint8_t addr){
    accel_fs_sel = 0;
    set_bank(0);
 
-   write_byte(PWR_MGMT_1, 0x80);
-   usleep(100);
+   //write_byte(PWR_MGMT_1, 0x80);
    write_byte(PWR_MGMT_1, 0x01);
+   usleep(100000);
    write_byte(PWR_MGMT_2, 0x00);
 
 }
@@ -91,8 +91,6 @@ accel_data icm20948::get_accel_data(){
     float fs = scale_ranges[accel_fs_sel];
 
     set_bank(0);
-
-    printf("%hd\n", read_word(0x2D, 0x2E));
 
     accel_data dat = {
  
