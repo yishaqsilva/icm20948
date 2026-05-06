@@ -78,11 +78,12 @@ void icm20948::set_accel_fs_sel(uint8_t fs_sel){
 
 accel_data icm20948::get_accel_data(){
     
-
     float scale_ranges[4] = {16384.0f, 8192.0f, 4096.0f, 2048.0f};
     float fs = scale_ranges[accel_fs_sel];
 
     set_bank(0);
+
+    printf("%hd\n", read_word(0x2D, 0x2E));
 
     accel_data dat = {
         
