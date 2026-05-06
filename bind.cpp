@@ -16,6 +16,8 @@ PYBIND11_MODULE(icm20948, m, pybind11::mod_gil_not_used()) {
 
         .def("get_gyro_data", &icm20948::get_gyro_data)
         .def("set_gyro_fs", &icm20948::set_gyro_fs)
+
+        .def("get_temp", &icm20948::get_temp)
         ;
 
     pybind11::class_<accel_data>(m, "accel_data")

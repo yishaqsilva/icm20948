@@ -6,12 +6,6 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include <stdio.h>
-#define WHO_AM_I 0x00
-#define PWR_MGMT_1 0x06
-#define PWR_MGMT_2 0x07
-#define ACCEL_CONFIG 0x14
-#define GYRO_CONFIG_1 0x01
-#define GYRO_CONFIG_2 0x02
 
 icm20948::icm20948(const char* filename, uint8_t addr){ 
         
@@ -26,15 +20,18 @@ icm20948::icm20948(const char* filename, uint8_t addr){
    }
 
    accel_fs = 0;
+   gyro_fs = 0;
+   bank = 0;
+
    set_bank(0);
 
    write_byte(PWR_MGMT_1, 0x01);
    write_byte(PWR_MGMT_2, 0x00);
    usleep(100);
-
 }
 
 uint8_t icm20948::who_am_i(){
+
     return read_byte(WHO_AM_I);
 }
 
@@ -75,7 +72,9 @@ int16_t icm20948::read_word(uint8_t regA, uint8_t regB){
 }
 
 void icm20948::set_bank(uint8_t bank){
-    write_byte(0x7F, bank << 4);
+    if (this->bank != bank){
+        write_byte(0x7F, bank << 4);
+    }
 }
 
 void icm20948::set_accel_fs(uint8_t fs){
@@ -125,4 +124,13 @@ gyro_data icm20948::get_gyro_data(){
     };
 
     return dat;
+}
+
+float icm20948::get_temp(){
+
+    set_bank(0);
+    int16_t raw = read_word(0x39, 0x3A);
+    float temp = ((raw - ICM20948_ROOM_TEMP_OFFSET) / ICM20948_TEMPERATURE_SENSITIVITY) + ICM20948_TEMPERATURE_DEGREES_OFFSET;
+
+    return temp;
 }

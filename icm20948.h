@@ -2,6 +2,18 @@
 #define ICM20948_H
 #include <cstdint>
 
+#define WHO_AM_I 0x00
+#define PWR_MGMT_1 0x06
+#define PWR_MGMT_2 0x07
+
+#define ACCEL_CONFIG 0x14
+#define GYRO_CONFIG_1 0x01
+#define GYRO_CONFIG_2 0x02
+
+#define ICM20948_TEMPERATURE_DEGREES_OFFSET 21.0f
+#define ICM20948_TEMPERATURE_SENSITIVITY 333.87f
+#define ICM20948_ROOM_TEMP_OFFSET 21.0f
+
 typedef struct {
 
     float x;
@@ -25,6 +37,7 @@ class icm20948 {
          float accel_fs;
          float gyro_fs;
          uint8_t addr;
+         uint8_t bank;
 
     public:
         icm20948(const char* i2c_bus, uint8_t addr); //I2C
@@ -40,6 +53,7 @@ class icm20948 {
 
         accel_data get_accel_data();
         gyro_data get_gyro_data();
+        float get_temp();
 };
 
 #endif
