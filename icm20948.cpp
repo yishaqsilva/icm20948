@@ -6,8 +6,12 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include <stdio.h>
+#define WHO_AM_I 0x00
 #define PWR_MGMT_1 0x06
 #define PWR_MGMT_2 0x07
+#define ACCEL_CONFIG 0x14
+#define GYRO_CONFIG_1 0x01
+#define GYRO_CONFIG_2 0x02
 
 icm20948::icm20948(const char* filename, uint8_t addr){ 
         
@@ -21,13 +25,17 @@ icm20948::icm20948(const char* filename, uint8_t addr){
         printf("Unable to set slave address %x\n", this->addr);
    }
 
-   accel_fs_sel = 0;
+   accel_fs = 0;
    set_bank(0);
 
    write_byte(PWR_MGMT_1, 0x01);
    write_byte(PWR_MGMT_2, 0x00);
    usleep(100);
 
+}
+
+uint8_t icm20948::who_am_i(){
+    return read_byte(WHO_AM_I);
 }
 
 uint8_t icm20948::read_byte(uint8_t reg){
@@ -70,40 +78,51 @@ void icm20948::set_bank(uint8_t bank){
     write_byte(0x7F, bank << 4);
 }
 
-uint8_t icm20948::get_accel_fs_sel(){
-    
-    return accel_fs_sel;
-}
-
-void icm20948::set_accel_fs_sel(uint8_t fs_sel){
+void icm20948::set_accel_fs(uint8_t fs){
 
     set_bank(2);
-    uint8_t byte = read_byte(0x14) | (fs_sel << 1);
-    write_byte(0x14, byte);
+    uint8_t old = read_byte(ACCEL_CONFIG);
+    old &= ~0x06;
+    write_byte(ACCEL_CONFIG, old | (fs << 1));
 
-    accel_fs_sel = fs_sel;
+    float scale_ranges[4] = {16384.0f, 8192.0f, 4096.0f, 2048.0f};
+    accel_fs = scale_ranges[fs];
 }
 
 accel_data icm20948::get_accel_data(){
-
-    float scale_ranges[4] = {16384.0f, 8192.0f, 4096.0f, 2048.0f};
-    float fs = scale_ranges[accel_fs_sel];
 
     set_bank(0);
 
     accel_data dat = {
  
-        .x = read_word(0x2D, 0x2E) / fs,
-        .y = read_word(0x2F, 0x30) / fs,
-        .z = read_word(0x31, 0x32) / fs
+        .x = read_word(0x2D, 0x2E) / accel_fs,
+        .y = read_word(0x2F, 0x30) / accel_fs,
+        .z = read_word(0x31, 0x32) / accel_fs
     };
 
     return dat;
 }
 
-gyro_data icm20948::get_gyro_data(){
+void icm20948::set_gyro_fs(uint8_t fs){
 
-    gyro_data dat = {};
+    set_bank(2);
+    uint8_t old = read_byte(GYRO_CONFIG_1);
+    old &= ~0x06;
+    write_byte(GYRO_CONFIG_1, old | (fs << 1));
+
+    float scale_ranges[4] = {131.0f, 65.5f, 32.8f, 16.4f};
+    gyro_fs = scale_ranges[fs];
+}
+
+gyro_data icm20948::get_gyro_data(){
+    
+    set_bank(0);
+    
+    gyro_data dat = {
+        .x = read_word(0x33, 0x34) / gyro_fs,
+        .y = read_word(0x35, 0x36) / gyro_fs,
+        .z = read_word(0x37, 0x38) / gyro_fs
+    };
 
     return dat;
 }
