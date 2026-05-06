@@ -25,8 +25,8 @@ icm20948::icm20948(const char* filename, uint8_t addr){
    set_bank(0);
 
    write_byte(PWR_MGMT_1, 0x01);
-   usleep(100);
    write_byte(PWR_MGMT_2, 0x00);
+   usleep(100);
 
 }
 
@@ -59,9 +59,9 @@ int icm20948::write_byte(uint8_t reg, uint8_t byte){
     return write(fd, msg, 2);
 }
 
-uint16_t icm20948::read_word(uint8_t regA, uint8_t regB){
+int16_t icm20948::read_word(uint8_t regA, uint8_t regB){
     
-    uint16_t word = read_byte(regA);
+    int16_t word = read_byte(regA);
 
     return word << 8 | read_byte(regB);
 }
