@@ -21,7 +21,7 @@ icm20948::icm20948(const char* filename, uint8_t addr){
 
    accel_fs = 0;
    gyro_fs = 0;
-   bank = 0;
+   bank = 21; //random value
 
    set_bank(0);
 
