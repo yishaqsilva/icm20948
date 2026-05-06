@@ -18,6 +18,8 @@ icm20948::icm20948(const char* filename, uint8_t addr){
    if (ioctl(fd, I2C_SLAVE, addr) < 0){
         printf("Unable to set slave address %x\n", this->addr);
    }
+
+   accel_fs_sel = 0;
 }
 
 uint8_t icm20948::read_byte(uint8_t reg){
@@ -62,18 +64,24 @@ void icm20948::set_bank(uint8_t bank){
 
 uint8_t icm20948::get_accel_fs_sel(){
     
-    set_bank(2);
-    uint8_t fs_sel = (read_byte(0x14) & 0x06) >> 1;
+    return accel_fs_sel;
+}
 
-    return fs_sel;
+void icm20948::set_accel_fs_sel(uint8_t fs_sel){
+
+    set_bank(2);
+    uint8_t byte = read_byte(0x14) | (fs_sel << 1);
+    write_byte(0x14, byte);
+
+    accel_fs_sel = fs_sel;
 }
 
 accel_data icm20948::get_accel_data(){
     
-    float scale_ranges[4] = {16384.0f, 8192.0f, 4096.0f, 2048.0f};
-    float fs = scale_ranges[get_accel_fs_sel()];
-
     set_bank(0);
+
+    float scale_ranges[4] = {16384.0f, 8192.0f, 4096.0f, 2048.0f};
+    float fs = scale_ranges[accel_fs_sel];
 
     accel_data dat = {
         

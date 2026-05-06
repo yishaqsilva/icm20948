@@ -7,9 +7,13 @@ PYBIND11_MODULE(icm20948, m, pybind11::mod_gil_not_used()) {
         .def("read_byte", &icm20948::read_byte)
         .def("write_byte", &icm20948::write_byte)
         .def("read_word", &icm20948::read_word)
-        .def("get_accel_data", &icm20948::get_accel_data);
+        .def("get_accel_data", &icm20948::get_accel_data)
+        .def("get_accel_fs_sel", &icm20948::get_accel_fs_sel)
+        .def("set_accel_fs_sel", &icm20948::set_accel_fs_sel)
+        ;
 
     pybind11::class_<accel_data>(m, "accel_data")
+        .def(pybind11::init<>())
         .def_readwrite("x", &accel_data::x)
         .def_readwrite("y", &accel_data::y)
         .def_readwrite("z", &accel_data::z);
