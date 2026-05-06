@@ -31,7 +31,7 @@ class icm20948 {
         int write_byte(uint8_t reg, uint8_t byte);
 
         uint8_t read_byte(uint8_t reg);
-        uint16_t read_word(uint8_t regA, uint8_t regB);
+        int16_t read_word(uint8_t regA, uint8_t regB);
         uint8_t get_accel_fs_sel();
         void set_accel_fs_sel(uint8_t fs_sel);
         accel_data get_accel_data();
