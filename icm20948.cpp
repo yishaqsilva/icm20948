@@ -24,9 +24,8 @@ icm20948::icm20948(const char* filename, uint8_t addr){
    accel_fs_sel = 0;
    set_bank(0);
 
-   //write_byte(PWR_MGMT_1, 0x80);
    write_byte(PWR_MGMT_1, 0x01);
-   usleep(100000);
+   usleep(100);
    write_byte(PWR_MGMT_2, 0x00);
 
 }
